@@ -28,6 +28,48 @@ public class MatrixD {
             matrix[i] = array[i].clone();
     }
 
+    private double[] getRow(int number) {
+        return matrix[number].clone();
+    }
+
+    private MatrixD addStr() {
+        return null;
+    }
+
+    public double det() throws ShapesNotAlignedException {
+        /*
+        * Метод Гаусса
+        */
+        double det = 0;
+
+        if (cols != rows)
+            throw new ShapesNotAlignedException(String.format("No determinant for non-square matrix (%d, %d)", cols, rows));
+
+        if (rows == 1)
+            return matrix[0][0];
+
+        if (rows == 2)
+            return matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
+
+        for (int i = 1; i < rows; i++) {
+            int subRowIndex = i - 1;
+
+            for (int row = i; row < rows; row++) {
+                var rate = -(matrix[i][i - 1] / matrix[subRowIndex][subRowIndex]);
+                matrix[row][i - 1] = 0;
+                for (int j = row; j < cols; j++) {
+
+                    matrix[row][j] += matrix[subRowIndex][j] * rate;
+                }
+            }
+        }
+
+        for (int i = 0; i < rows; i++)
+            det *= matrix[i][i];
+
+        return det;
+    }
+
     public MatrixD transpose() {
         MatrixD result = new MatrixD(cols, rows);
 
