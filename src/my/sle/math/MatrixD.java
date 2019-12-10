@@ -44,8 +44,8 @@ public class MatrixD {
 
         MatrixD result = new MatrixD(this.rows, factor.cols);
 
-        for (int i = 0; i < factor.rows; i++)
-            for (int j = 0; j < factor.rows; j++)
+        for (int i = 0; i < this.rows; i++)
+            for (int j = 0; j < factor.cols; j++)
                 for (int k = 0; k < factor.rows; k++)
                     result.matrix[i][j] += this.matrix[i][k] * factor.matrix[k][j];
 

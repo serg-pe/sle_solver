@@ -13,9 +13,9 @@ public class Main {
                     {1, 1, 1},
             };
             double[][] arr2 = {
-                    {1, 1, 1, 1},
-                    {1, 1, 1, 1},
-                    {1, 1, 1, 1}
+                    {1, 1, 1, 1, 1, 1},
+                    {1, 1, 1, 1, 1, 1},
+                    {1, 1, 1, 1, 1, 1}
             };
             var m1 = new MatrixD(arr1);
             var m2 = new MatrixD(arr2);
