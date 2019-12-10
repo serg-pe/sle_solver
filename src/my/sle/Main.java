@@ -1,7 +1,6 @@
 package my.sle;
 
 import my.sle.math.MatrixD;
-import my.sle.math.ShapesNotAlignedException;
 
 public class Main {
 
@@ -28,6 +27,7 @@ public class Main {
             var m3 = new MatrixD(arr3);
 
             System.out.println(m3.det());
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

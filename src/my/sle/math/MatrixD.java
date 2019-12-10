@@ -1,7 +1,5 @@
 package my.sle.math;
 
-import java.util.Arrays;
-
 public class MatrixD {
     private int rows;
     private int cols;
@@ -36,38 +34,37 @@ public class MatrixD {
         return null;
     }
 
-    public double det() throws ShapesNotAlignedException {
-        /*
-        * Метод Гаусса
-        */
+    private double detRec(MatrixD matrix) {
+        MatrixD temp;
         double det = 0;
 
+        if (matrix.rows == 1)
+            return matrix.matrix[0][0];
+
+        if (matrix.rows == 2)
+            return matrix.matrix[0][0] * matrix.matrix[1][1] - matrix.matrix[1][0] * matrix.matrix[0][1];
+
+        for (int i = 0; i < matrix.cols; i++) {
+            temp = new MatrixD(matrix.rows - 1, matrix.cols - 1);
+
+            for (int j = 1; j < matrix.rows; j++) {
+                for (int k = 0; k < matrix.cols; k++)
+                    if (k < i)
+                        temp.matrix[j - 1][k] = matrix.matrix[j][k];
+                    else if (k > i)
+                        temp.matrix[j - 1][k - 1] = matrix.matrix[j][k];
+            }
+            det += matrix.matrix[0][i] * Math.pow(-1, i) * detRec(temp);
+        }
+
+        return det;
+    }
+
+    public double det() throws ShapesNotAlignedException {
         if (cols != rows)
             throw new ShapesNotAlignedException(String.format("No determinant for non-square matrix (%d, %d)", cols, rows));
 
-        if (rows == 1)
-            return matrix[0][0];
-
-        if (rows == 2)
-            return matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
-
-        for (int i = 1; i < rows; i++) {
-            int subRowIndex = i - 1;
-
-            for (int row = i; row < rows; row++) {
-                var rate = -(matrix[i][i - 1] / matrix[subRowIndex][subRowIndex]);
-                matrix[row][i - 1] = 0;
-                for (int j = row; j < cols; j++) {
-
-                    matrix[row][j] += matrix[subRowIndex][j] * rate;
-                }
-            }
-        }
-
-        for (int i = 0; i < rows; i++)
-            det *= matrix[i][i];
-
-        return det;
+        return detRec(this);
     }
 
     public MatrixD transpose() {
