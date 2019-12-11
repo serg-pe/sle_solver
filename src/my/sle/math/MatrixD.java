@@ -9,13 +9,20 @@ public class MatrixD {
     public MatrixD(int size) {
         rows = cols = size;
         matrix = new double[rows][cols];
-
     }
 
     public MatrixD(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         matrix = new double[rows][cols];
+    }
+
+    public MatrixD(MatrixD matrix) {
+        rows = matrix.rows;
+        cols = matrix.cols;
+        this.matrix = matrix.getMatrix().clone();
+        for (int i = 0; i < matrix.getRows(); i++)
+            this.matrix[i] = matrix.getMatrix()[i].clone();
     }
 
     public MatrixD(double[][] array) {
@@ -28,10 +35,6 @@ public class MatrixD {
 
     private double[] getRow(int number) {
         return matrix[number].clone();
-    }
-
-    private MatrixD addStr() {
-        return null;
     }
 
     private double detRec(MatrixD matrix) {
@@ -60,6 +63,22 @@ public class MatrixD {
         return det;
     }
 
+    /**
+     * Срез матрицы.
+     * @param colStart  Индекс первого столбца
+     * @param colEnd    Индекс последнего столбца
+     * @return  Матрица с исходным количеством строк и столбцами [@param colStart не включая @param colEnd)
+     */
+    public MatrixD slice(int colStart, int colEnd) {
+        var result = new MatrixD(this.getRows(), colEnd - colStart);
+
+        for (int i = 0; i < result.getRows(); i++)
+            for (int j = colStart; j < colEnd; j++)
+                result.matrix[i][j - colStart] = this.getMatrix()[i][j];
+
+        return result;
+    }
+
     public double det() throws ShapesNotAlignedException {
         if (cols != rows)
             throw new ShapesNotAlignedException(String.format("No determinant for non-square matrix (%d, %d)", cols, rows));
@@ -77,6 +96,16 @@ public class MatrixD {
         return result;
     }
 
+    MatrixD divide(double divisor) {
+        MatrixD result = new MatrixD(this);
+
+        for (int i = 0; i < result.getRows(); i++)
+            for (int j = 0; j < result.getCols(); j++)
+                result.matrix[i][j] /= divisor;
+
+        return result;
+    }
+
     public MatrixD multiply(MatrixD factor) throws ShapesNotAlignedException {
         if (this.cols != factor.rows)
             throw new ShapesNotAlignedException(String.format("Shapes not aligned for (%d, %d) & (%d, %d)", this.rows, this.cols, factor.rows, factor.cols));
@@ -89,6 +118,57 @@ public class MatrixD {
                     result.matrix[i][j] += this.matrix[i][k] * factor.matrix[k][j];
 
         return result;
+    }
+
+    public MatrixD extractMinor(int row, int col) {
+        MatrixD minor = new MatrixD(rows - 1, cols - 1);
+
+        for (int i = 0; i < rows; i++) {
+            if (i == row)
+                continue;
+            for (int j = 0; j < cols; j++) {
+                if (j == col)
+                    continue;
+                if (i < row && j < col)
+                    minor.matrix[i][j] = this.matrix[i][j];
+                else if (i < row && j > col)
+                    minor.matrix[i][j - 1] = this.matrix[i][j];
+                else if (i > row && j < col)
+                    minor.matrix[i - 1][j] = this.matrix[i][j];
+                else
+                    minor.matrix[i - 1][j - 1] = this.matrix[i][j];
+            }
+        }
+
+        return minor;
+    }
+
+    public MatrixD makeAdjunct() throws ShapesNotAlignedException {
+        /*
+        *Союзная матрица
+         */
+        if (cols != rows)
+            throw new ShapesNotAlignedException(String.format("No determinant for non-square matrix (%d, %d)", cols, rows));
+
+        var adjunct = new MatrixD(rows, cols);
+
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++) {
+                adjunct.matrix[i][j] = extractMinor(i, j).det() * Math.pow(-1, i + j);
+            }
+
+        return adjunct;
+    }
+
+    public MatrixD makeInvertable() throws ShapesNotAlignedException, CantSolveException {
+        if (cols != rows)
+            throw new ShapesNotAlignedException(String.format("No determinant for non-square matrix (%d, %d)", cols, rows));
+
+        double det = det();
+        if (det == 0)
+            throw new CantSolveException("Can nott find invertable Matrix. Determinant = 0.");
+
+        return makeAdjunct().transpose().divide(det);
     }
 
     public int getRows() {
