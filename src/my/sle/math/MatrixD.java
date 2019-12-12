@@ -79,6 +79,54 @@ public class MatrixD {
         return result;
     }
 
+    public MatrixD exchangeRows(int rowIndex1, int rowIndex2) {
+        MatrixD result = new MatrixD(this);
+
+        for (int col = 0; col < result.getCols(); col++) {
+            result.getMatrix()[rowIndex1][col] = this.getMatrix()[rowIndex2][col];
+            result.getMatrix()[rowIndex2][col] = this.getMatrix()[rowIndex1][col];
+        }
+
+        return result;
+    }
+
+    public MatrixD multiplyRow(int rowIndex, double factor) {
+        MatrixD result = new MatrixD(this);
+
+        for (int col = 0; col < result.getCols(); col++)
+            result.getMatrix()[rowIndex][col] *= factor;
+
+        return result;
+    }
+
+    public MatrixD divideRow(int rowIndex, double divizor) {
+        MatrixD result = new MatrixD(this);
+
+        for (int col = 0; col < result.getCols(); col++)
+            result.getMatrix()[rowIndex][col] /= divizor;
+
+        return result;
+    }
+
+    MatrixD sumRows(int rowIndex, int addedRowIndex) {
+        MatrixD result = new MatrixD(this);
+
+        for (int col = 0; col < getCols(); col++)
+            result.getMatrix()[addedRowIndex][col] += this.getMatrix()[rowIndex][col];
+
+        return result;
+    }
+
+    public MatrixD divide(double divizor) {
+        MatrixD result = new MatrixD(this);
+
+        for (int row = 0; row < getRows(); row++)
+            for (int col = 0; col < getCols(); col++)
+                result.getMatrix()[row][col] /= divizor;
+
+        return result;
+    }
+
     public double det() throws ShapesNotAlignedException {
         if (cols != rows)
             throw new ShapesNotAlignedException(String.format("No determinant for non-square matrix (%d, %d)", cols, rows));
@@ -92,16 +140,6 @@ public class MatrixD {
         for (int i = 0; i < this.rows; i++)
             for (int j = 0; j < this.cols; j++)
                 result.matrix[j][i] = this.matrix[i][j];
-
-        return result;
-    }
-
-    MatrixD divide(double divisor) {
-        MatrixD result = new MatrixD(this);
-
-        for (int i = 0; i < result.getRows(); i++)
-            for (int j = 0; j < result.getCols(); j++)
-                result.matrix[i][j] /= divisor;
 
         return result;
     }

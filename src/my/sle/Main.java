@@ -2,6 +2,7 @@ package my.sle;
 
 import my.sle.math.MatrixD;
 import my.sle.math.SLESolver;
+import my.sle.math.SLESolverGaussJordan;
 import my.sle.math.SLESolverMatrixMethod;
 
 public class Main {
@@ -26,9 +27,10 @@ public class Main {
 //            };
 
             double[][] A = {
-                    {3, 2, -1, 4},
-                    {2, -1, 5, 23},
-                    {1, 7, -1, 5}
+                    {3, 2, -1, 4, 9},
+                    {2, -1, 5, 23, 0},
+                    {1, 0, -1, 5, 12},
+                    {1, 7, -1, 8, -12}
             };
             double[][] B = {
                     {4},
@@ -43,8 +45,21 @@ public class Main {
             var mA = new MatrixD(A);
 //            System.out.println(mA.makeInvertable());
 
-            var matrixMethod = new SLESolverMatrixMethod();
-            System.out.println(matrixMethod.solve(mA));
+            SLESolver matrixMethod = new SLESolverMatrixMethod();
+            double[] result = matrixMethod.solve(mA);
+            var resultStr = "";
+            for (var elem : result)
+                resultStr = resultStr.concat(Double.toString(elem) + " ");
+            System.out.println(resultStr);
+
+            System.out.println();
+
+            matrixMethod = new SLESolverGaussJordan();
+            resultStr = "";
+            result = matrixMethod.solve(mA);
+            for (var elem : result)
+                resultStr = resultStr.concat(Double.toString(elem) + " ");
+            System.out.println(resultStr);
 
         } catch (Exception e) {
             e.printStackTrace();

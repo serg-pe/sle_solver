@@ -6,5 +6,5 @@ public interface SLESolver {
      * @param sle   Матрица с коэффициентами перед неизвестными и последним столбцом свободных членов
      * @return Матрица значений неизвестных X
      */
-    MatrixD solve(MatrixD sle) throws CantSolveException, ShapesNotAlignedException;
+    double[] solve(MatrixD sle) throws CantSolveException, ShapesNotAlignedException;
 }
