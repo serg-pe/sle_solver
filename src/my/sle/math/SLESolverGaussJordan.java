@@ -1,6 +1,7 @@
 package my.sle.math;
 
 public class SLESolverGaussJordan implements SLESolver {
+    private static final String methodName = "Метод Гаусса-Жордана";
 
     private MatrixD straightForward(MatrixD sle) {
         MatrixD result = new MatrixD(sle);
@@ -51,6 +52,11 @@ public class SLESolverGaussJordan implements SLESolver {
     public double[] solve(MatrixD sle) throws CantSolveException, ShapesNotAlignedException {
         MatrixD result = new MatrixD(sle);
 
+        if (result.getRows() == 1 && result.getCols() == 2) {
+            result = result.divide(result.getMatrix()[0][0]);
+            return getDiagonal(result);
+        }
+
         if (result.getMatrix()[0][0] == 0)
             for (int row = 1; row < sle.getRows(); row++)
                 if (result.getMatrix()[row][0] != 0) {
@@ -65,5 +71,10 @@ public class SLESolverGaussJordan implements SLESolver {
             result = result.divideRow(row, result.getMatrix()[row][row]);
 
         return getDiagonal(result);
+    }
+
+    @Override
+    public String getMethodName() {
+        return methodName;
     }
 }

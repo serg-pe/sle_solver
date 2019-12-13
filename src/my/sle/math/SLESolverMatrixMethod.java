@@ -1,6 +1,7 @@
 package my.sle.math;
 
 public class SLESolverMatrixMethod implements SLESolver {
+    private static final String methodName = "Матричный метод";
 
     @Override
     public double[] solve(MatrixD sle) throws CantSolveException, ShapesNotAlignedException {
@@ -8,5 +9,10 @@ public class SLESolverMatrixMethod implements SLESolver {
         var b = sle.slice(sle.getCols() - 1, sle.getCols());
 
         return a.makeInvertable().multiply(b).transpose().getMatrix()[0];
+    }
+
+    @Override
+    public String getMethodName() {
+        return methodName;
     }
 }

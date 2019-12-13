@@ -7,4 +7,5 @@ public interface SLESolver {
      * @return Матрица значений неизвестных X
      */
     double[] solve(MatrixD sle) throws CantSolveException, ShapesNotAlignedException;
+    String getMethodName();
 }

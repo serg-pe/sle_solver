@@ -1,5 +1,7 @@
 package my.sle.gui;
 
+import my.sle.math.*;
+
 public class Model {
     private int matrixSize = 3;
 
