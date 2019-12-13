@@ -36,20 +36,18 @@ public class Controller {
         view.updateView(size);
     }
 
-    private ResultData solveSLE(MatrixD sle) {
-        SLESolver[] solvers = {new SLESolverMatrixMethod(), new SLESolverGaussJordan()};
-        double[][] result = new double[solvers.length][];
-        String[] methods = new String[solvers.length];
+    private SLEResultData[] solveSLE(MatrixD sle) {
+        SLESolver[] solvers = {new SLESolverMatrixMethod(), new SLESolverGaussJordanElimination()};
+        SLEResultData[] results = new SLEResultData[solvers.length];
 
         for (int solverIndex = 0; solverIndex < solvers.length; solverIndex++)
             try {
-                methods[solverIndex] = solvers[solverIndex].getMethodName();
-                result[0] = solvers[solverIndex].solve(sle);
-            } catch (CantSolveException | ShapesNotAlignedException exc) {
-                result[0] = null;
+                results[solverIndex] = new SLEResultData(solvers[solverIndex].solve(sle), solvers[solverIndex].getMethodName(), "");
+            } catch (DeterminantIsZeroException | ShapesNotAlignedException | InconsistentSLEException e) {
+                results[solverIndex] = new SLEResultData(null, solvers[solverIndex].getMethodName(), e.getMessage());
             }
 
-        return new ResultData(result, methods);
+        return results;
     }
 
     private void onSolveSLEBtn() {

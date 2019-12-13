@@ -1,6 +1,6 @@
 package my.sle.math;
 
-public class SLESolverGaussJordan implements SLESolver {
+public class SLESolverGaussJordanElimination implements SLESolver {
     private static final String methodName = "Метод Гаусса-Жордана";
 
     private MatrixD straightForward(MatrixD sle) {
@@ -49,11 +49,15 @@ public class SLESolverGaussJordan implements SLESolver {
     }
 
     @Override
-    public double[] solve(MatrixD sle) throws CantSolveException, ShapesNotAlignedException {
+    public double[] solve(MatrixD sle) throws DeterminantIsZeroException, ShapesNotAlignedException, InconsistentSLEException {
         MatrixD result = new MatrixD(sle);
 
         if (result.getRows() == 1 && result.getCols() == 2) {
             result = result.divide(result.getMatrix()[0][0]);
+
+            if (isInconsistent(result))
+                throw new InconsistentSLEException("Несовместная СЛАУ");
+
             return getDiagonal(result);
         }
 
@@ -70,11 +74,30 @@ public class SLESolverGaussJordan implements SLESolver {
         for (int row = 0; row < result.getRows(); row++)
             result = result.divideRow(row, result.getMatrix()[row][row]);
 
+        if (isInconsistent(result))
+            throw new InconsistentSLEException("Несовместная СЛАУ");
+
         return getDiagonal(result);
     }
 
     @Override
     public String getMethodName() {
         return methodName;
+    }
+
+    @Override
+    public boolean isInconsistent(MatrixD sle) {
+        for (int row = 0; row < sle.getRows(); row++) {
+            int rowSum = 0;
+
+            for (int col = 0; col < sle.getCols() - 1; col++)
+                rowSum += sle.getMatrix()[row][col];
+
+            if (rowSum == 0 && sle.getMatrix()[row][sle.getCols() - 1] != 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

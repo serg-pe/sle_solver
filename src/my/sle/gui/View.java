@@ -11,17 +11,17 @@ public class View {
     private JPanel answerPanel;
     private JLabel sizeLabel;
 
+    private JButton fileLoadBtn;
+    private JButton fileSaveBtn;
     private JTextField sizeTextField;
     private JButton setSizeTextFieldBtn;
 
     private JTextField[][] factorsFields;
     private JLabel[][] variableNameFieldsLabels;
-    private JLabel[] resultLabels;
     private JButton solveBtn;
 
 
     public View(String title) {
-//        TODO Try to add ScrollPane
         viewFrame = new JFrame(title);
         viewFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         viewFrame.setSize(600, 600);
@@ -35,8 +35,12 @@ public class View {
         setSizeTextFieldBtn = new JButton("Применить");
         sizeTextField.setPreferredSize(new Dimension(50, 25));
         solveBtn = new JButton("Решить");
+        fileLoadBtn = new JButton("Загрузить");
+        fileSaveBtn = new JButton("Сохранить");
 
         sleParamsPanel = new JPanel(new FlowLayout());
+        sleParamsPanel.add(fileLoadBtn);
+        sleParamsPanel.add(fileSaveBtn);
         sleParamsPanel.add(sizeLabel);
         sleParamsPanel.add(sizeTextField);
         sleParamsPanel.add(setSizeTextFieldBtn);
@@ -88,22 +92,27 @@ public class View {
         viewFrame.pack();
     }
 
-    public void updateView(ResultData results) {
+    public void updateView(SLEResultData[] results) {
+        final String outputPattern = "%s: %s";
         answerPanel.removeAll();
 
-        answerPanel.setLayout(new GridLayout(results.getResult().length, results.getResult()[0].length));
+        answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.PAGE_AXIS));
+        var answersLabels = new JLabel[results.length];
 
-        for (int row = 0; row < results.getResult().length; row++) {
-            answerPanel.add(new JLabel(results.getMethods()[row]));
-            if (results.getResult()[row] == null)
-                answerPanel.add(new JLabel("Метод не подходит для решения системы"));
-            else {
-                resultLabels = new JLabel[results.getResult()[row].length];
-                for (int col = 0; col < results.getResult()[row].length; col++) {
-                    resultLabels[col] = new JLabel("X".concat(Integer.toString(col)).concat(": ").concat(Double.toString(results.getResult()[row][col])));
-                    answerPanel.add(resultLabels[col]);
-                }
+        for (int resRow = 0; resRow < results.length; resRow++) {
+            if (results[resRow].getResult() == null) {
+                answersLabels[resRow] = new JLabel(String.format(outputPattern, results[resRow].getMethod(), results[resRow].getErrorMessage()));
             }
+            else {
+                String resultStr = "";
+
+                for (int resCol = 0; resCol < results[resRow].getResult().length; resCol++)
+                    resultStr += Double.toString(results[resRow].getResult()[resCol]).concat(" ");
+
+                answersLabels[resRow] = new JLabel(String.format(outputPattern, results[resRow].getMethod(), resultStr));
+            }
+
+            answerPanel.add(answersLabels[resRow]);
         }
 
         viewFrame.validate();
@@ -122,15 +131,19 @@ public class View {
         return factorsFields;
     }
 
-    public JLabel[] getResultLabels() {
-        return resultLabels;
-    }
-
     public JButton getSolveBtn() {
         return solveBtn;
     }
 
     public JTextField getSizeTextField() {
         return sizeTextField;
+    }
+
+    public JButton getFileLoadBtn() {
+        return fileLoadBtn;
+    }
+
+    public JButton getFileSaveBtn() {
+        return fileSaveBtn;
     }
 }

@@ -4,7 +4,7 @@ public class SLESolverMatrixMethod implements SLESolver {
     private static final String methodName = "Матричный метод";
 
     @Override
-    public double[] solve(MatrixD sle) throws CantSolveException, ShapesNotAlignedException {
+    public double[] solve(MatrixD sle) throws DeterminantIsZeroException, ShapesNotAlignedException, InconsistentSLEException {
         var a = sle.slice(0, sle.getCols() - 1);
         var b = sle.slice(sle.getCols() - 1, sle.getCols());
 
@@ -14,5 +14,10 @@ public class SLESolverMatrixMethod implements SLESolver {
     @Override
     public String getMethodName() {
         return methodName;
+    }
+
+    @Override
+    public boolean isInconsistent(MatrixD sle) {
+        return false;
     }
 }

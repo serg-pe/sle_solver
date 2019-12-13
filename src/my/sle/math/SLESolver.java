@@ -6,6 +6,7 @@ public interface SLESolver {
      * @param sle   Матрица с коэффициентами перед неизвестными и последним столбцом свободных членов
      * @return Матрица значений неизвестных X
      */
-    double[] solve(MatrixD sle) throws CantSolveException, ShapesNotAlignedException;
+    double[] solve(MatrixD sle) throws DeterminantIsZeroException, ShapesNotAlignedException, InconsistentSLEException;
     String getMethodName();
+    boolean isInconsistent(MatrixD sle);
 }

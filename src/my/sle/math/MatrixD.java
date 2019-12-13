@@ -198,13 +198,13 @@ public class MatrixD {
         return adjunct;
     }
 
-    public MatrixD makeInvertable() throws ShapesNotAlignedException, CantSolveException {
+    public MatrixD makeInvertable() throws ShapesNotAlignedException, DeterminantIsZeroException {
         if (cols != rows)
             throw new ShapesNotAlignedException(String.format("No determinant for non-square matrix (%d, %d)", cols, rows));
 
         double det = det();
         if (det == 0)
-            throw new CantSolveException("Can nott find invertable Matrix. Determinant = 0.");
+            throw new DeterminantIsZeroException("Нельзя найти обратну матрицу. Определитель = 0.");
 
         return makeAdjunct().transpose().divide(det);
     }
