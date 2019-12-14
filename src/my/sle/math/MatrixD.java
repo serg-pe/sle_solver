@@ -1,6 +1,9 @@
 package my.sle.math;
 
-public class MatrixD {
+import java.io.Serializable;
+
+public class MatrixD implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int rows;
     private int cols;
 

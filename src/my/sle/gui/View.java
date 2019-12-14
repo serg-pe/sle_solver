@@ -1,5 +1,7 @@
 package my.sle.gui;
 
+import my.sle.math.MatrixD;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -114,6 +116,17 @@ public class View {
 
             answerPanel.add(answersLabels[resRow]);
         }
+
+        viewFrame.validate();
+        viewFrame.pack();
+    }
+
+    public void updateView(MatrixD matrix) {
+        this.updateView(matrix.getRows());
+
+        for (int row = 0; row < factorsFields.length; row++)
+            for (int col = 0; col < factorsFields[row].length; col++)
+                factorsFields[row][col].setText(Double.toString(matrix.getMatrix()[row][col]));
 
         viewFrame.validate();
         viewFrame.pack();
