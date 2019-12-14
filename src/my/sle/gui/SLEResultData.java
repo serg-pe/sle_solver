@@ -1,5 +1,7 @@
 package my.sle.gui;
 
+// Формат данных для хранения информации о решении СЛАУ
+// Используется в Контроллере (Controller) и Представлении (View)
 public class SLEResultData {
     private double[] result;
     private String method;

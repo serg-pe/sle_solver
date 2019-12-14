@@ -5,8 +5,8 @@ public class SLESolverMatrixMethod implements SLESolver {
 
     @Override
     public double[] solve(MatrixD sle) throws DeterminantIsZeroException, ShapesNotAlignedException, InconsistentSLEException {
-        var a = sle.slice(0, sle.getCols() - 1);
-        var b = sle.slice(sle.getCols() - 1, sle.getCols());
+        MatrixD a = sle.slice(0, sle.getCols() - 1);
+        MatrixD b = sle.slice(sle.getCols() - 1, sle.getCols());
 
         return a.makeInvertable().multiply(b).transpose().getMatrix()[0];
     }

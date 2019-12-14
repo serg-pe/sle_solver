@@ -5,12 +5,16 @@ import my.sle.math.MatrixD;
 import javax.swing.*;
 import java.awt.*;
 
+// Представление - внешний вид программы.
+// Включает в себя окно, компоненты и методы для обновления окна и его компонентов
+// Используется в Контроллере (Controller)
+// Роль - отображать информацию пользователю. "Пользователь видит Представление"
 public class View {
-    private JFrame viewFrame;
-    private JPanel viewPanel;
-    private JPanel sleParamsPanel;
-    private JPanel slePanel;
-    private JPanel answerPanel;
+    private JFrame viewFrame; // Главное окно
+    private JPanel viewPanel; // Контейнер для компонентов окна
+    private JPanel sleParamsPanel; // Контейнер для кнопок загрузки, сохранения, применения размера матрицы, решения и поля ввода размера
+    private JPanel slePanel; // Контейнер с компонентами ввода СЛАУ
+    private JPanel answerPanel; // Контейнер для вывода ответа
     private JLabel sizeLabel;
 
     private JButton fileLoadBtn;
@@ -22,7 +26,7 @@ public class View {
     private JLabel[][] variableNameFieldsLabels;
     private JButton solveBtn;
 
-
+//    Инициализация компонентов окна
     public View(String title) {
         viewFrame = new JFrame(title);
         viewFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -59,14 +63,18 @@ public class View {
         viewFrame.pack();
     }
 
+//    Обновление внешнего вида окна при изменении размера матрицы
+//    вызывается нажатием кнопки Примеить (setSizeTextFieldBtn)
     public void updateView(int size) {
         int rows = size;
         int cols = size + 1;
 
+//        Удаление всех старых компонентов из контейнера с компонентами ввода СЛАУ
         slePanel.removeAll();
-
+//        Установка текста в поле ввода текста
         sizeTextField.setText(Integer.toString(size));
 
+//        Установка сетки вывода компонентов
         slePanel.setLayout(new GridLayout(rows, cols));
 
         factorsFields = new JTextField[rows][cols];
@@ -94,12 +102,15 @@ public class View {
         viewFrame.pack();
     }
 
+//    Обновление внешнего вида окна при решении СЛАУ
+//    вызывается нажатием кнопки Решить (solveBtn)
     public void updateView(SLEResultData[] results) {
         final String outputPattern = "%s: %s";
         answerPanel.removeAll();
 
+//        Вывод в текстовые поля контейнера для вывода ответа по вертикали
         answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.PAGE_AXIS));
-        var answersLabels = new JLabel[results.length];
+        JLabel[] answersLabels = new JLabel[results.length];
 
         for (int resRow = 0; resRow < results.length; resRow++) {
             if (results[resRow].getResult() == null) {
@@ -121,6 +132,8 @@ public class View {
         viewFrame.pack();
     }
 
+//    Обновление внешнего вида окна при получении матрицы
+//    вызывается после загрузки матрицы из файла
     public void updateView(MatrixD matrix) {
         this.updateView(matrix.getRows());
 
@@ -132,6 +145,7 @@ public class View {
         viewFrame.pack();
     }
 
+//    Методы получения компонентов для контроллера (Controller)
     public JFrame getViewFrame() {
         return viewFrame;
     }

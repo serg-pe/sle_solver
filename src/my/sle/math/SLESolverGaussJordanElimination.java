@@ -3,6 +3,7 @@ package my.sle.math;
 public class SLESolverGaussJordanElimination implements SLESolver {
     private static final String methodName = "Метод Гаусса-Жордана";
 
+//    Высчитывание нижней прямоугольной матрицы
     private MatrixD straightForward(MatrixD sle) {
         MatrixD result = new MatrixD(sle);
 
@@ -21,6 +22,7 @@ public class SLESolverGaussJordanElimination implements SLESolver {
         return result;
     }
 
+//    Высчитывание верхней прямоугольной матрицы
     private MatrixD backForward(MatrixD sle) {
         MatrixD result = new MatrixD(sle);
 
@@ -39,28 +41,32 @@ public class SLESolverGaussJordanElimination implements SLESolver {
         return result;
     }
 
-    private double[] getDiagonal(MatrixD matrix) {
-        double[] diagonal = new double[matrix.getRows()];
+//    Получение ответа - свободные члены
+    private double[] getAnswer(MatrixD matrix) {
+        double[] answer = new double[matrix.getRows()];
 
-        for (int row = 0; row < diagonal.length; row++)
-            diagonal[row] = matrix.getMatrix()[row][matrix.getCols() - 1];
+        for (int row = 0; row < answer.length; row++)
+            answer[row] = matrix.getMatrix()[row][matrix.getCols() - 1];
 
-        return diagonal;
+        return answer;
     }
 
     @Override
     public double[] solve(MatrixD sle) throws DeterminantIsZeroException, ShapesNotAlignedException, InconsistentSLEException {
         MatrixD result = new MatrixD(sle);
 
+//        Если матрица единичная
         if (result.getRows() == 1 && result.getCols() == 2) {
             result = result.divide(result.getMatrix()[0][0]);
 
             if (isInconsistent(result))
                 throw new InconsistentSLEException("Несовместная СЛАУ");
 
-            return getDiagonal(result);
+            return getAnswer(result);
         }
 
+//        Если элемент в 0-ой строке и 0-ом столбце = 0, 
+//        поиск строки, в которой элемент в 0-ом столбце != 0 и перестановка строк
         if (result.getMatrix()[0][0] == 0)
             for (int row = 1; row < sle.getRows(); row++)
                 if (result.getMatrix()[row][0] != 0) {
@@ -77,7 +83,7 @@ public class SLESolverGaussJordanElimination implements SLESolver {
         if (isInconsistent(result))
             throw new InconsistentSLEException("Несовместная СЛАУ");
 
-        return getDiagonal(result);
+        return getAnswer(result);
     }
 
     @Override

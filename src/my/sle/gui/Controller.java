@@ -7,6 +7,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
 
+// Контроллер - связующее звено между Представлением и Моделью
+// Содержит методы для преобразования и передачи данных между Представлеием и Моделью
+// Содержит обработчики событий нажатий кнопок на окне
+// Роль - обновление интерфейса, Решение СЛАУ, обработка нажатий пользователем на кнопки. "Пользователь видит Представление, но взаимодействует с Контроллером"
 public class Controller {
     private Model model;
     private View view;
@@ -16,10 +20,14 @@ public class Controller {
         this.view = view;
     }
 
+//    Инициализация контроллера
     public void init() {
         view.updateView(model.getMatrixSize());
+//        Сделать окно видимым
         view.getViewFrame().setVisible(true);
 
+//        Привязка событий к нажатиям на кнопки.
+//        При нажатии на кнопку окна (в Представлении), происходит вызов соответствующего метода Контроллера
         view.getSetSizeTextFieldBtn().addActionListener(event -> this.onSetSizeBtn());
         view.getSolveBtn().addActionListener(event -> this.onSolveSLEBtn());
 
@@ -27,6 +35,7 @@ public class Controller {
         view.getFileSaveBtn().addActionListener(event -> this.onSaveBtnClick());
     }
 
+//    Считывание матрицы из текстовых полей представления
     private MatrixD readMatrix() throws MatrixReadException {
         double[][] sleParams = new double[view.getFactorsFields().length][view.getFactorsFields()[0].length];
 
@@ -34,6 +43,8 @@ public class Controller {
         for (int row = 0; row < sleParams.length; row++)
             for (int col = 0; col < sleParams[row].length; col++)
                 try {
+//                    Считывание текстовых данных о СЛАУ и преобразование в числовые значения
+//                    Если не удалось преобразовать текстовые данные в число, то вызывается исключение NumberFormatException и переход в блок catch
                     sleParams[row][col] = Double.parseDouble(view.getFactorsFields()[row][col].getText());
                     view.getFactorsFields()[row][col].setBackground(Color.green);
                 } catch (NumberFormatException e) {
@@ -48,8 +59,9 @@ public class Controller {
         return new MatrixD(sleParams);
     }
 
+//    Сохранение матрицы в файл
     private void onSaveBtnClick() {
-        var saveDialog = new JFileChooser();
+        JFileChooser saveDialog = new JFileChooser();
 
         saveDialog.setDialogTitle("Выберите файл для сохранения");
         int userSelection = saveDialog.showDialog(view.getViewFrame(), "Сохранить");
@@ -70,8 +82,9 @@ public class Controller {
         }
     }
 
+//    Загрузка матрицы из файла
     private void onLoadBtnClick() {
-        var loadDialog = new JFileChooser();
+        JFileChooser loadDialog = new JFileChooser();
 
         loadDialog.setDialogTitle("Выберите файл для загрузки");
         int userSelection = loadDialog.showDialog(view.getViewFrame(), "Загрузить");
@@ -90,6 +103,7 @@ public class Controller {
         }
     }
 
+//    Изменение количества переменных в СЛАУ
     private void onSetSizeBtn() {
         int size;
 
@@ -104,6 +118,7 @@ public class Controller {
         view.updateView(size);
     }
 
+//    Решение СЛАУ
     private SLEResultData[] solveSLE(MatrixD sle) {
         SLESolver[] solvers = {new SLESolverMatrixMethod(), new SLESolverGaussJordanElimination()};
         SLEResultData[] results = new SLEResultData[solvers.length];
@@ -118,6 +133,7 @@ public class Controller {
         return results;
     }
 
+//    Вызывается при нажатии на кнопку "Решить"
     private void onSolveSLEBtn() {
         try {
             view.updateView(solveSLE(readMatrix()));
